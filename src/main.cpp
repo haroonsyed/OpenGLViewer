@@ -113,15 +113,24 @@ int main()
      // //  0.0f, -1.0f, 0.0f  // bottom
      //};
     MeshImporter importer;
-    std::vector<float> meshData = importer.readMesh("../../../data/cube.obj");
+    std::vector<float> meshData = importer.readMesh("../../../data/testing.obj");
     float* vertices = &meshData[0];
-    vertices = new float[] {
-        -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f, // left  
-        0.5f, -.75f, 0.0f, 0.0f, 1.0f, 0.0f,// right 
-        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top
-    };
 
-    unsigned int numVertices = 3;
+    for (int i = 0; i < meshData.size(); i+=6) {
+        for (int j = 0; j < 6; j++) {
+            std::cout << vertices[i + j] << " ";
+        }
+        std::cout << "" << std::endl; 
+    }
+
+    //vertices = new float[] {
+    //    -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f, // left  
+    //    0.5f, -.75f, 0.0f, 0.0f, 1.0f, 0.0f,// right 
+    //    0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top
+    //};
+
+    //    -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f,   // DATA FORMAT
+    unsigned int numVertices = meshData.size()/6; // Each vertex is 6
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);

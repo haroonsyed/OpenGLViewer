@@ -3,6 +3,17 @@
 #include <fstream>
 #include <iostream>
 
+std::vector<float> MeshImporter::getIndexedPosition(std::vector<float> positions, int index)
+{   
+    std::vector<float> vertex;
+    // Get three vertices and return them 
+    vertex.push_back(positions[index * 3 + 0]);
+    vertex.push_back(positions[index * 3 + 1]);
+    vertex.push_back(positions[index * 3 + 2]);
+
+    return vertex;
+}
+
 std::vector<std::string> MeshImporter::delimit(std::string str, char delimiter) {
     std::vector<std::string> delimited;
     std::string curr = "";
@@ -58,12 +69,21 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
 
         // Build tris from faces, interpolated with color data
         else if(delimited[0] == "f") {
-          vertices.push_back(vIndex.at( delimited[1][0]-'0' ));
-          vertices.insert(vertices.end(), {1.0f,0.0f,0.0f});
-          vertices.push_back(vIndex.at( delimited[2][0]-'0' ));
-          vertices.insert(vertices.end(), {0.0f,1.0f,0.0f});
-          vertices.push_back(vIndex.at( delimited[3][0]-'0' ));
-          vertices.insert(vertices.end(), {0.0f,0.0f,1.0f});
+          // Get each position (list of 3 coordinates)
+          auto v1 = getIndexedPosition(vIndex, std::stoi(delimited[1]) - 1);
+          auto v2 = getIndexedPosition(vIndex, std::stoi(delimited[2]) - 1);
+          auto v3 = getIndexedPosition(vIndex, std::stoi(delimited[3]) - 1);
+          
+          //Insert into vertices, interpolated with color data
+          vertices.insert(vertices.end(), v1.begin(), v1.end());
+          vertices.insert(vertices.end(), { 1.0f,0.0f,0.0f });
+          
+          vertices.insert(vertices.end(), v2.begin(), v2.end());
+          vertices.insert(vertices.end(), { 0.0f,1.0f,0.0f });
+          
+          vertices.insert(vertices.end(), v3.begin(), v3.end());
+          vertices.insert(vertices.end(), { 0.0f,0.0f,1.0f });
+
         }
 
     }
