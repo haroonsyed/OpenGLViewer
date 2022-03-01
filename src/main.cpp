@@ -7,6 +7,7 @@
 
 // My Imports
 #include "meshImporter.h"
+#include "shaderImporter.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -15,22 +16,12 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 aColor;\n"
-    "out vec4 vertexColor;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "   vertexColor = vec4(aColor, 1.0);\n"
-    "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-    "in vec4 vertexColor;\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vertexColor;\n"
-    "}\n\0";
+ShaderImporter shaderImporter;
+std::string vertexShader = shaderImporter.readShader("../../../shaders/source.vs");
+std::string fragShader = shaderImporter.readShader("../../../shaders/source.fs");
+
+const char* vertexShaderSource = vertexShader.c_str();
+const char* fragmentShaderSource = fragShader.c_str();
 
 int main()
 {
