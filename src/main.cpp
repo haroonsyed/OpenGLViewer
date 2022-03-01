@@ -5,6 +5,9 @@
 
 #include <iostream>
 
+// My Imports
+#include "meshImporter.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
@@ -100,16 +103,25 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float vertices[] = {
-        -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f, // left  
-         0.5f, -.75f, 0.0f, 0.0f, 1.0f, 0.0f,// right 
-         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top   
+     //float vertices[] = {
+         //-0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f, // left  
+         // 0.5f, -.75f, 0.0f, 0.0f, 1.0f, 0.0f,// right 
+         // 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top   
 
-        // -0.5f, -0.5f, 0.0f, // left  
-        //  0.5f, -0.5f, 0.0f, // right 
-        //  0.0f, -1.0f, 0.0f  // bottom
+     // // -0.5f, -0.5f, 0.0f, // left  
+     // //  0.5f, -0.5f, 0.0f, // right 
+     // //  0.0f, -1.0f, 0.0f  // bottom
+     //};
+    MeshImporter importer;
+    std::vector<float> meshData = importer.readMesh("../../../data/cube.obj");
+    float* vertices = &meshData[0];
+    vertices = new float[] {
+        -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f, // left  
+        0.5f, -.75f, 0.0f, 0.0f, 1.0f, 0.0f,// right 
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top
     };
-    unsigned int numVertices = sizeof(vertices)/3;
+
+    unsigned int numVertices = 3;
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
@@ -118,7 +130,7 @@ int main()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*6*numVertices, vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // Position Data
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float))); // Color data
