@@ -5,6 +5,10 @@
 
 #include <iostream>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 // My Imports
 #include "meshImporter.h"
 #include "shaderImporter.h"
@@ -152,6 +156,15 @@ int main()
         // input
         // -----
         processInput(window);
+
+        // Rotate model as a function of time
+        //Setup Rotation matrices
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        //Pass to gpu
+        unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
         // render
         // ------

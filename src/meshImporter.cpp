@@ -42,7 +42,7 @@ void MeshImporter::normalizeMesh(std::vector<float>& vIndex)
     // Normalize vertices
     float max = 0;
     for (float v : vIndex) {
-        max = v > max ? v : max;
+        max = std::abs(v) > max ? v : max;
     }
     for (int i = 0; i < vIndex.size(); i++) {
         vIndex[i] /= max * 1.1; // 1.1 to keep it better in window instead of exact
