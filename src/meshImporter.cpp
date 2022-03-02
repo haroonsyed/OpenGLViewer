@@ -37,6 +37,18 @@ std::vector<std::string> MeshImporter::delimit(std::string str, char delimiter) 
     return delimited;
 }
 
+void MeshImporter::normalizeMesh(std::vector<float>& vIndex)
+{
+    // Normalize vertices
+    float max = 0;
+    for (float v : vIndex) {
+        max = v > max ? v : max;
+    }
+    for (int i = 0; i < vIndex.size(); i++) {
+        vIndex[i] /= max * 1.1; // 1.1 to keep it better in window instead of exact
+    }
+}
+
 // CURRENTLY EXPECTS TRIS ONLY
 std::vector<float> MeshImporter::readMesh(std::string filepath)
 {
@@ -45,6 +57,9 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
     std::vector<float> vertices;
 
     std::string line;
+
+    bool shouldNormalize = true;
+
     while (std::getline(file, line)) {
 
         if (line.empty()) {
@@ -69,6 +84,12 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
 
         // Build tris from faces, interpolated with color data
         else if(delimited[0] == "f") {
+
+          // First check if geometry has to be normalized
+          if(shouldNormalize == true) {
+            normalizeMesh(vIndex);
+          }
+
           // Get each position (list of 3 coordinates)
           auto v1 = getIndexedPosition(vIndex, std::stoi(delimited[1]) - 1);
           auto v2 = getIndexedPosition(vIndex, std::stoi(delimited[2]) - 1);
