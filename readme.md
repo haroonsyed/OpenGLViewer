@@ -56,6 +56,8 @@ Change line 111 of main to load different obj files from "data" folder.
 
 ### Outside Help
 I mainly relied on https://learnopengl.com/ and the class lecture notes to understand what libraries are needed
+
+
 I also used https://docs.gl/ to see information regarding the opengl library.
 
 ## Assignment Requriements Checklist:
@@ -64,6 +66,6 @@ I also used https://docs.gl/ to see information regarding the opengl library.
 | Modify vertex and frag shader to support color data | :white_check_mark: | |
 | Load meshes from obj files | :white_check_mark: | Only works with tri meshes (no quads/n-gons) |
 | Load vertex and frag shaders from files (.vs and .fs) | :white_check_mark: | |
-| Make change to vertex/frag shader | :white_check_mark: | Passed model transformation matrix to rotate model |
+| Make change to vertex/frag shader | :white_check_mark: | Passed model transformation matrix to rotate model as a function of time |
 | Bonus: Implement EBO with indexed triangle structure | :x: | |
 | Documentation | :x: | | 
