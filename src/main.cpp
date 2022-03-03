@@ -148,6 +148,7 @@ int main()
         processInput(window);
 
         // Rotate model as a function of time
+        // INSPIRED BY TUTORIAL AT https://learnopengl.com/Getting-started/Coordinate-Systems
         //Setup Rotation matrices
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));

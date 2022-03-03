@@ -59,16 +59,7 @@ Change bool `useSeparateTriangles` to switch between separate and indexed tri st
 ![Per Vertex Color](./docs/coloredTri.png)
 Currently changing color requires changing the code for mesh importing in `readMesh()` where color data is interpolated with vertex position.
 
-### Different Meshes (Separate Tris)
-![Dolphins Mesh](./docs/dolphins.png)
-![Teapot Mesh](./docs/teapot.png)
-![WomanHead Mesh](./docs/womanhead.png)
-![World Mesh](./docs/world_curved.png)
-![Al Character Mesh](./docs/al_character.png)
-![Porsche Mesh](./docs/porsche.png)
-
-
-
+### Convert from n-gon to tri
 The algorithm for breaking down a mesh seemed daunting. But a little bit of pencil and paper work showed all I had to do was connect every vertex from the first with increments for the second and third vertex. (Work below)
 ![Work](./docs/work.jpeg)
 Which translates to the following psuedocode:
@@ -82,20 +73,36 @@ for (int i = 0; i < face.size() - 3; i++) {
     v3 = getIndexedPosition(vIndex, (i+3) - 1);
 ```
 
-<br>
+### Normalizing meshes to stay in view
 To keep the mesh within the viewplane I simply had to normalize the vertex list by the maximum coordinate of all vertices.
+
+### Rotating View
+The code for this is based on learnopengl's tutorial at https://learnopengl.com/Getting-started/Coordinate-Systems. Although modified and pretty easy to understand.
+All I had to do was define a glm rotation vector and pass this to my vertex shader, where the model matrix is multiplied by the original mesh's position matrix.
 
 ### File Reading
 For the rest of the assignment, much of the work was simply reading files and using the correct delimiter.
-For this I used `fstream` with `getline()`
-The code for this can be seen in `readMesh` and `readMesh` of `MeshImporter` class. As well as `readShader` of the shaderImporter class.
+For this I used `fstream` with `getline()`.
+The code for this can be seen in `readMesh()` and `delimit()` of `MeshImporter` class. As well as `readShader` of the shaderImporter class.
+
+## Examples (Separate Tris)
+![Dolphins Mesh](./docs/dolphins.png)
+![Teapot Mesh](./docs/teapot.png)
+![WomanHead Mesh](./docs/womanhead.png)
+![World Mesh](./docs/world_curved.png)
+![Al Character Mesh](./docs/al_character.png)
+![Porsche Mesh](./docs/porsche.png)
 
 <br>
 
-### Outside Help
+## Animation
+Below is a video of what the viewer looks like when open:<br>
+https://youtu.be/L00kfk67emE
+
+
+## Outside Help
 I mainly relied on https://learnopengl.com/ and the class lecture notes to understand what/how to do matrix transformations and work with shaders.
-
-
+<br>
 I also used https://docs.gl/ to see information regarding the opengl library.
 
 ## Assignment Requriements Checklist:
