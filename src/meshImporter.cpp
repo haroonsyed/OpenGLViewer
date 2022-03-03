@@ -90,20 +90,28 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
             normalizeMesh(vIndex);
           }
 
-          // Get each position (list of 3 coordinates)
-          auto v1 = getIndexedPosition(vIndex, std::stoi(delimited[1]) - 1);
-          auto v2 = getIndexedPosition(vIndex, std::stoi(delimited[2]) - 1);
-          auto v3 = getIndexedPosition(vIndex, std::stoi(delimited[3]) - 1);
-          
-          //Insert into vertices, interpolated with color data
-          vertices.insert(vertices.end(), v1.begin(), v1.end());
-          vertices.insert(vertices.end(), { 1.0f,0.0f,0.0f });
-          
-          vertices.insert(vertices.end(), v2.begin(), v2.end());
-          vertices.insert(vertices.end(), { 0.0f,1.0f,0.0f });
-          
-          vertices.insert(vertices.end(), v3.begin(), v3.end());
-          vertices.insert(vertices.end(), { 0.0f,0.0f,1.0f });
+          auto color1 = { 1.0f,0.0f,0.0f };
+          auto color2 = { 0.0f,1.0f,0.0f };
+          auto color3 = { 0.0f,0.0f,1.0f };
+
+          // Loop breaks n-gons into tris
+          for (int i = 0; i < delimited.size() - 3; i++) {
+
+              // Get each position (list of 3 coordinates)
+              auto v1 = getIndexedPosition(vIndex, std::stoi(delimited[1]) - 1);
+              auto v2 = getIndexedPosition(vIndex, std::stoi(delimited[i+2]) - 1);
+              auto v3 = getIndexedPosition(vIndex, std::stoi(delimited[i+3]) - 1);
+
+              //Insert into vertices, interpolated with color data
+              vertices.insert(vertices.end(), v1.begin(), v1.end());
+              vertices.insert(vertices.end(), color1);
+
+              vertices.insert(vertices.end(), v2.begin(), v2.end());
+              vertices.insert(vertices.end(), color2);
+
+              vertices.insert(vertices.end(), v3.begin(), v3.end());
+              vertices.insert(vertices.end(), color3);
+          }
 
         }
 

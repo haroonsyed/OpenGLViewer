@@ -12,6 +12,7 @@
 // My Imports
 #include "meshImporter.h"
 #include "shaderImporter.h"
+#include "config.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -96,19 +97,8 @@ int main()
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-     //float vertices[] = {
-         //-0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f, // left  
-         // 0.5f, -.75f, 0.0f, 0.0f, 1.0f, 0.0f,// right 
-         // 0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f// top   
-
-     // // -0.5f, -0.5f, 0.0f, // left  
-     // //  0.5f, -0.5f, 0.0f, // right 
-     // //  0.0f, -1.0f, 0.0f  // bottom
-     //};
     MeshImporter importer;
-    std::vector<float> meshData = importer.readMesh("../../../data/dolphins.obj");
+    std::vector<float> meshData = importer.readMesh(filepath);
     float* vertices = &meshData[0];
 
     // DEBUG
