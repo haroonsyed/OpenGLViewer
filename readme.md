@@ -46,6 +46,9 @@ libxmu-dev libxi-dev libgl-dev libxinerama-dev libxcursor-dev xorg-dev libglu1-m
 5. Run `make` to build your executable
 6. Run `./main` 
 
+### Common Error
+The path between visual studio and using cmake/make directly will differ. Make sure the `filepath` in `config.h` is valid or the program will crash with an error. (I have not implemented error reports for this.)
+
 ### Operation Guide
 Change filepath in `config.h` to change obj file loaded in viewer.
 Change bool `useSeparateTriangles` to switch between separate and indexed tri structure.
