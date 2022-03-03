@@ -98,7 +98,7 @@ int main()
     glDeleteShader(fragmentShader);
 
     MeshImporter importer;
-    std::vector<float> meshData = importer.readMesh(filepath);
+    std::vector<float> meshData = importer.readSepTriMesh(filepath);
     float* vertices = &meshData[0];
 
     // DEBUG

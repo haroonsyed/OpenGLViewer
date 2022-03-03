@@ -50,7 +50,7 @@ void MeshImporter::normalizeMesh(std::vector<float>& vIndex)
 }
 
 // CURRENTLY EXPECTS TRIS ONLY
-std::vector<float> MeshImporter::readMesh(std::string filepath)
+std::vector<float> MeshImporter::readSepTriMesh(std::string filepath)
 {
     std::ifstream file(filepath);
     std::vector<float> vIndex;
@@ -58,7 +58,8 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
 
     std::string line;
 
-    bool shouldNormalize = true;
+    vIndex = getVIndex(filepath);
+    normalizeMesh(vIndex);
 
     while (std::getline(file, line)) {
 
@@ -75,20 +76,8 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
           std::cout << s << std::endl;
         }*/
 
-        // Build index
-        if(delimited[0] == "v") {
-          vIndex.push_back(std::stof(delimited[1]));
-          vIndex.push_back(std::stof(delimited[2]));
-          vIndex.push_back(std::stof(delimited[3]));
-        }
-
         // Build tris from faces, interpolated with color data
-        else if(delimited[0] == "f") {
-
-          // First check if geometry has to be normalized
-          if(shouldNormalize == true) {
-            normalizeMesh(vIndex);
-          }
+        if(delimited[0] == "f") {
 
           auto color1 = { 1.0f,0.0f,0.0f };
           auto color2 = { 0.0f,1.0f,0.0f };
@@ -118,4 +107,65 @@ std::vector<float> MeshImporter::readMesh(std::string filepath)
     }
 
     return vertices;
+}
+
+// Returns a normalized index of all the vertices
+std::vector<float> MeshImporter::getVIndex(std::string filepath)
+{
+    std::ifstream file(filepath);
+    std::vector<float> vIndex;
+    std::string line;
+
+    while (std::getline(file, line)) {
+
+        if (line.empty()) {
+            continue;
+        }
+
+
+        auto delimited = delimit(line, ' ');
+
+        // Build index
+        if (delimited[0] == "v") {
+            vIndex.push_back(std::stof(delimited[1]));
+            vIndex.push_back(std::stof(delimited[2]));
+            vIndex.push_back(std::stof(delimited[3]));
+        }
+
+    }
+
+    return vIndex;
+}
+
+std::vector<unsigned int> MeshImporter::getFaceIndices(std::string, std::string filepath)
+{
+    std::ifstream file(filepath);
+    std::vector<unsigned int> faces;
+    std::string line;
+
+    while (std::getline(file, line)) {
+
+        if (line.empty()) {
+            continue;
+        }
+
+        auto delimited = delimit(line, ' ');
+
+        if (delimited[0] == "f") {
+
+            // Loop breaks n-gons into tris
+            for (int i = 0; i < delimited.size() - 3; i++) {
+
+                // Get each position (list of 3 coordinates)
+                faces.push_back(std::stoul(delimited[1]) - 1);
+                faces.push_back(std::stoul(delimited[i + 2]) - 1);
+                faces.push_back(std::stoul(delimited[i + 3]) - 1);
+
+            }
+
+        }
+
+    }
+
+    return faces;
 }
