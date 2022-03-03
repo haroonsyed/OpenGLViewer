@@ -1,6 +1,3 @@
-Resources Used:
-learnOpenGl.com
-
 # OpenGLViewer
 [Link to Repository](https://github.com/haroonsyed/OpenGLViewer)
 
