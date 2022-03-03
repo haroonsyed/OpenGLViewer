@@ -111,3 +111,10 @@ I also used https://docs.gl/ to see information regarding the opengl library.
 | Make change to vertex/frag shader | :white_check_mark: | Passed model transformation matrix to rotate model as a function of time |
 | Bonus: Implement EBO with indexed triangle structure | :x: | |
 | Documentation | :white_check_mark: | | 
+
+## DISCLAIMER
+THIS IS ONLY FOR SUBMISSION/DEMONSTRATION PURPOSES AND IS NOT FOR OTHER STUDENTS TAKING THE CLASS. 
+
+I DO NOT AUTHORIZE THE USE OF THIS CODE FOR CLASS PURPOSES BY ANY STUDENT OTHER THAN MYSELF OR IN ANY FORM THAT WOULD BE CONSIDERED "CHEATING" OR "PLAGARISM". 
+
+Please be ethical.
