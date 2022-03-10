@@ -5,6 +5,6 @@ class ShaderImporter {
 private:
     
 public:
-    std::string readShader(std::string filepath);
+    std::string readShader(std::string meshFilePath);
 
 };

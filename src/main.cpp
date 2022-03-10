@@ -17,13 +17,10 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-// settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
-
+// Import shaders
 ShaderImporter shaderImporter;
-std::string vertexShader = shaderImporter.readShader("../../../shaders/source.vs");
-std::string fragShader = shaderImporter.readShader("../../../shaders/source.fs");
+std::string vertexShader = shaderImporter.readShader(vertexShaderPath);
+std::string fragShader = shaderImporter.readShader(fragShaderPath);
 
 const char* vertexShaderSource = vertexShader.c_str();
 const char* fragmentShaderSource = fragShader.c_str();
@@ -98,20 +95,13 @@ int main()
     glDeleteShader(fragmentShader);
 
     MeshImporter importer;
-    std::vector<float> meshData = importer.readSepTriMesh(filepath);
+    std::vector<float> meshData = importer.readSepTriMesh(meshFilePath);
     float* vertices = &meshData[0];
 
-    // DEBUG
-    //for (int i = 0; i < meshData.size(); i+=6) {
-    //    for (int j = 0; j < 6; j++) {
-    //        std::cout << vertices[i + j] << " ";
-    //    }
-    //    std::cout << "" << std::endl; 
-    //}
-
     //    -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f,   // DATA FORMAT
-    unsigned int numVertices = meshData.size()/6; // Each vertex is 6
+    unsigned int numVertices = meshData.size()/6; // Each vertex has 6 datapoints
 
+    // Setup buffers for data
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -137,12 +127,10 @@ int main()
     // uncomment this call to draw in wireframe polygons.
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    glEnable(GL_DEPTH_TEST);
-
-    InputController inputController(window);
-
     // render loop
     // -----------
+    glEnable(GL_DEPTH_TEST);
+    InputController inputController(window);
     while (!glfwWindowShouldClose(window))
     {
         // input

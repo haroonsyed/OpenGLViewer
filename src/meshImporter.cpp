@@ -50,15 +50,15 @@ void MeshImporter::normalizeMesh(std::vector<float>& vIndex)
 }
 
 // CURRENTLY EXPECTS TRIS ONLY
-std::vector<float> MeshImporter::readSepTriMesh(std::string filepath)
+std::vector<float> MeshImporter::readSepTriMesh(std::string meshFilePath)
 {
-    std::ifstream file(filepath);
+    std::ifstream file(meshFilePath);
     std::vector<float> vIndex;
     std::vector<float> vertices;
 
     std::string line;
 
-    vIndex = getVIndex(filepath);
+    vIndex = getVIndex(meshFilePath);
     normalizeMesh(vIndex);
 
     while (std::getline(file, line)) {
@@ -110,9 +110,9 @@ std::vector<float> MeshImporter::readSepTriMesh(std::string filepath)
 }
 
 // Returns a normalized index of all the vertices
-std::vector<float> MeshImporter::getVIndex(std::string filepath)
+std::vector<float> MeshImporter::getVIndex(std::string meshFilePath)
 {
-    std::ifstream file(filepath);
+    std::ifstream file(meshFilePath);
     std::vector<float> vIndex;
     std::string line;
 
@@ -137,9 +137,9 @@ std::vector<float> MeshImporter::getVIndex(std::string filepath)
     return vIndex;
 }
 
-std::vector<unsigned int> MeshImporter::getFaceIndices(std::string, std::string filepath)
+std::vector<unsigned int> MeshImporter::getFaceIndices(std::string, std::string meshFilePath)
 {
-    std::ifstream file(filepath);
+    std::ifstream file(meshFilePath);
     std::vector<unsigned int> faces;
     std::string line;
 
