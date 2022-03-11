@@ -148,15 +148,15 @@ int main()
         glm::mat4 view = inputController.getViewTransform();
 
         // Light info
-        glm::vec3 light = glm::vec3(-1.0f, 0.0f, -1.0f);
+        glm::vec3 lightPos = glm::vec3(-1.0f, 0.0f, -1.0f);
 
         //Pass to gpu
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        unsigned int lightLoc = glGetUniformLocation(shaderProgram, "light");
-        glUniform3fv(lightLoc, 1, glm::value_ptr(light));
+        unsigned int lightLoc = glGetUniformLocation(shaderProgram, "lightPos");
+        glUniform3fv(lightLoc, 1, glm::value_ptr(lightPos));
 
         // render
         // ------

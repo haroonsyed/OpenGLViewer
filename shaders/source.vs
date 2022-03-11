@@ -7,18 +7,29 @@ out vec4 vertexColor;
 
 uniform mat4 model;
 uniform mat4 view;
-uniform vec3 light;
+uniform vec3 lightPos;
 
 void main()
 {
-   gl_Position = view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+   vec3 transformedPos = vec3(model * vec4(aPos,1));
+   vec3 transformedNorm = vec3(model * vec4(normalize(aNorm),0.0));
 
-   vec3 normal = vec3(model * vec4(normalize(aNorm),0.0));
-   vec3 lightDir = normalize(light);
+   // Calculate Position
+   gl_Position = view * vec4(transformedPos,1);
+
+
+   // Calculate vectors needed for lighting
+   vec3 toLight = normalize(lightPos-transformedPos);
+   vec3 viewDir = normalize(transformedPos);
+   vec3 h = normalize((viewDir) + toLight);
 
    float ambient = 0.1;
-   float diffuse = max(dot(normal,lightDir),0);
+   float specularStrength = 0.5;
+   float phongExp = 10000;
+
+   float diffuse = max(dot(transformedNorm,toLight),0);
+   float specular = max(pow(dot(transformedNorm,h), 100),0);
    
-   vertexColor = (ambient + diffuse) * vec4(aColor, 1.0);
+   vertexColor = (ambient + diffuse) * vec4(aColor, 1.0) + specular * vec4(1.0);
 
 };

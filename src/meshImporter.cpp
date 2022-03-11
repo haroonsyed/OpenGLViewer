@@ -124,9 +124,17 @@ std::vector<float> MeshImporter::readSepTriMesh(std::string meshFilePath)
     // Go through the vIndex and fIndex and build a separate tri structure with color data
     // Vertex Format: x1,y1,z1,x2,y2,z2,x3,y3,z3,r1,g1,b1,r2,g2,b2,r3,g3,b3
 
+    //auto color1 = { 1.0f,0.0f,0.0f };
+    //auto color2 = { 0.0f,1.0f,0.0f };
+    //auto color3 = { 0.0f,0.0f,1.0f };
+
+    //auto color1 = { 1.0f,1.0f,1.0f };
+    //auto color2 = { 1.0f,1.0f,1.0f };
+    //auto color3 = { 1.0f,1.0f,1.0f };
+
     auto color1 = { 1.0f,0.0f,0.0f };
-    auto color2 = { 0.0f,1.0f,0.0f };
-    auto color3 = { 0.0f,0.0f,1.0f };
+    auto color2 = { 1.0f,0.0f,0.0f };
+    auto color3 = { 1.0f,0.0f,0.0f };
 
     for (int i = 0; i < fIndex.size() / 3; i++) { // Since each face has 3 positions we div by 3
 
