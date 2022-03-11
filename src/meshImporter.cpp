@@ -33,17 +33,12 @@ void MeshImporter::normalizeMesh(std::vector<float>& vIndex)
     }
 }
 
-/*********************/
-// PUBLIC FUNCTIONS
-/*********************/
-
-// Returns an index of all the vertices in a mesh
-std::vector<float> MeshImporter::getVIndex(std::string meshFilePath)
-{
+template <typename type> 
+std::vector<type> MeshImporter::getAttributeIndex(std::string meshFilePath, std::string attribute) {
     std::ifstream file(meshFilePath);
     StringUtil sutil;
 
-    std::vector<float> vIndex;
+    std::vector<type> attributeIndex;
     std::string line;
 
     while (std::getline(file, line)) {
@@ -51,50 +46,19 @@ std::vector<float> MeshImporter::getVIndex(std::string meshFilePath)
         if (line.empty()) {
             continue;
         }
-
 
         auto delimited = sutil.delimit(line, ' ');
 
         // Build index
-        if (delimited[0] == "v") {
-            vIndex.push_back(std::stof(delimited[1]));
-            vIndex.push_back(std::stof(delimited[2]));
-            vIndex.push_back(std::stof(delimited[3]));
-        }
+        if (delimited[0] == attribute) {
 
-    }
-
-    return vIndex;
-}
-
-
-// Builds an index of faces with vertex positions corresponding to the vIndex
-// Also breaks down ngons into tris
-std::vector<unsigned int> MeshImporter::getFaceIndex(std::string meshFilePath)
-{
-    std::ifstream file(meshFilePath);
-    StringUtil sutil;
-
-    std::vector<unsigned int> faces;
-    std::string line;
-
-    while (std::getline(file, line)) {
-
-        if (line.empty()) {
-            continue;
-        }
-
-        auto delimited = sutil.delimit(line, ' ');
-
-        if (delimited[0] == "f") {
-
-            // Loop breaks n-gons into tris
+            // Loop also breaks n-gons into tris (other attributes are just left as 3 data points)
             for (int i = 0; i < delimited.size() - 3; i++) {
 
                 // Get each position (list of 3 coordinates)
-                faces.push_back(std::stoul(delimited[1]) - 1);
-                faces.push_back(std::stoul(delimited[i + 2]) - 1);
-                faces.push_back(std::stoul(delimited[i + 3]) - 1);
+                attributeIndex.push_back((type)std::stof(delimited[1]));
+                attributeIndex.push_back((type)std::stof(delimited[i + 2]));
+                attributeIndex.push_back((type)std::stof(delimited[i + 3]));
 
             }
 
@@ -102,7 +66,34 @@ std::vector<unsigned int> MeshImporter::getFaceIndex(std::string meshFilePath)
 
     }
 
-    return faces;
+    return attributeIndex;
+}
+
+// Gets all normals corresponding to the vertices in the vIndex
+std::vector<float> MeshImporter::getNormalIndex(std::string meshFilePath) {
+    std::vector<float> normalIndex = getAttributeIndex<float>(meshFilePath, "vn");
+
+    return normalIndex;
+}
+
+/*********************/
+// PUBLIC FUNCTIONS
+/*********************/
+
+// Returns an index of all the vertices in a mesh
+std::vector<float> MeshImporter::getVIndex(std::string meshFilePath)
+{
+    std::vector<float> vIndex = getAttributeIndex<float>(meshFilePath, "v");
+
+    return vIndex;
+}
+
+// Returns an index of all faces, with 3 uints representing position of each vertex for each face in vIndex
+std::vector<unsigned int> MeshImporter::getFaceIndex(std::string meshFilePath)
+{
+    std::vector<unsigned int> vIndex = getAttributeIndex<unsigned int>(meshFilePath, "f");
+
+    return vIndex;
 }
 
 // Uses vIndex and fIndex to build a separate tris structure
@@ -113,12 +104,14 @@ std::vector<float> MeshImporter::readSepTriMesh(std::string meshFilePath)
 
     std::vector<float> vIndex;
     std::vector<unsigned int> fIndex;
+    std::vector<float> nIndex;
     std::vector<float> vertices;
 
     std::string line;
 
     vIndex = getVIndex(meshFilePath);
     fIndex = getFaceIndex(meshFilePath);
+    nIndex = getNormalIndex(meshFilePath);
     normalizeMesh(vIndex);
 
     // Go through the vIndex and fIndex and build a separate tri structure with color data
@@ -130,19 +123,33 @@ std::vector<float> MeshImporter::readSepTriMesh(std::string meshFilePath)
 
     for (int i = 0; i < fIndex.size() / 3; i++) { // Since each face has 3 positions we div by 3
 
+        // Each face is built from 3 vertices. First find position of attribute in index
+        // Sub 1 from fIndex to account for obj vIndex starting at 1 instead of 0
+        unsigned int v1IndexPos = fIndex[3 * i + 0] - 1;
+        unsigned int v2IndexPos = fIndex[3 * i + 1] - 1;
+        unsigned int v3IndexPos = fIndex[3 * i + 2] - 1;
+
         // Get each position (list of 3 coordinates)
-        auto v1 = getIndexedPosition(vIndex, fIndex[3 * i + 0]);
-        auto v2 = getIndexedPosition(vIndex, fIndex[3 * i + 1]);
-        auto v3 = getIndexedPosition(vIndex, fIndex[3 * i + 2]);
+        auto v1 = getIndexedPosition(vIndex, v1IndexPos);
+        auto v2 = getIndexedPosition(vIndex, v2IndexPos);
+        auto v3 = getIndexedPosition(vIndex, v3IndexPos);
+
+        // Get each normal (list of x,y,z component)
+        auto n1 = getIndexedPosition(nIndex, v1IndexPos);
+        auto n2 = getIndexedPosition(nIndex, v2IndexPos);
+        auto n3 = getIndexedPosition(nIndex, v3IndexPos);
 
         //Insert into vertices, with color data
         vertices.insert(vertices.end(), v1.begin(), v1.end());
+        vertices.insert(vertices.end(), n1.begin(), n1.end());
         vertices.insert(vertices.end(), color1);
 
         vertices.insert(vertices.end(), v2.begin(), v2.end());
+        vertices.insert(vertices.end(), n2.begin(), n2.end());
         vertices.insert(vertices.end(), color2);
 
         vertices.insert(vertices.end(), v3.begin(), v3.end());
+        vertices.insert(vertices.end(), n3.begin(), n3.end());
         vertices.insert(vertices.end(), color3);
     }
 

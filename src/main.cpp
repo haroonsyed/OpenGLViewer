@@ -98,8 +98,8 @@ int main()
     std::vector<float> meshData = importer.readSepTriMesh(meshFilePath);
     float* vertices = &meshData[0];
 
-    //    -0.5f, -.25f, 0.0f, 1.0f, 0.0f, 0.0f,   // DATA FORMAT
-    unsigned int numVertices = meshData.size()/6; // Each vertex has 6 datapoints
+    unsigned int numDataPoints = 9; // Each vertex has 9 datapoints (pos,norm,col)
+    unsigned int numVertices = meshData.size()/numDataPoints; 
 
     // Setup buffers for data
     unsigned int VBO, VAO;
@@ -109,12 +109,15 @@ int main()
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float)*6*numVertices, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * numDataPoints * numVertices, vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0); // Position Data
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float))); // Color data
+    // Add attribute data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numDataPoints * sizeof(float), (void*)0); // Position Data
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, numDataPoints * sizeof(float), (void*)(3 * sizeof(float))); // Normal data
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, numDataPoints * sizeof(float), (void*)(6 * sizeof(float))); // Color data
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
