@@ -8,6 +8,7 @@ class MeshImporter {
     void normalizeMesh(std::vector<float>& vertexIndex);
     std::vector<float> getNormalIndex(std::string meshFilePath);
     template <typename type> std::vector<type> getAttributeIndex(std::string meshFilePath, std::string attribute);
+    std::vector<std::vector<unsigned int>> MeshImporter::buildMesh(std::string meshFilePath);
   public:
     std::vector<float> readSepTriMesh(std::string meshFilePath);
     std::vector<float> getVIndex(std::string meshFilePath);

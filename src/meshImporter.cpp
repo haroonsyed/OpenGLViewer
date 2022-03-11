@@ -33,7 +33,8 @@ void MeshImporter::normalizeMesh(std::vector<float>& vIndex)
     }
 }
 
-template <typename type> 
+// Used to build the index of vertex data for an attribute. The actual indices themseleves are from buildFaces
+template <typename type>
 std::vector<type> MeshImporter::getAttributeIndex(std::string meshFilePath, std::string attribute) {
     std::ifstream file(meshFilePath);
     StringUtil sutil;
@@ -52,21 +53,75 @@ std::vector<type> MeshImporter::getAttributeIndex(std::string meshFilePath, std:
         // Build index
         if (delimited[0] == attribute) {
 
-            // Loop also breaks n-gons into tris (other attributes are just left as 3 data points)
-            for (int i = 0; i < delimited.size() - 3; i++) {
-
-                // Get each position (list of 3 coordinates)
-                attributeIndex.push_back((type)std::stof(delimited[1]));
-                attributeIndex.push_back((type)std::stof(delimited[i + 2]));
-                attributeIndex.push_back((type)std::stof(delimited[i + 3]));
-
-            }
+            // Get each position (list of 3 coordinates)
+            attributeIndex.push_back((type)std::stof(delimited[1]));
+            attributeIndex.push_back((type)std::stof(delimited[2]));
+            attributeIndex.push_back((type)std::stof(delimited[3]));
 
         }
 
     }
 
     return attributeIndex;
+}
+
+// Given a string containing data vertex data in format "pos//tex//norm" returns delimited list
+std::vector<unsigned int> buildVertex(std::string vertex) {
+
+    StringUtil sutil;
+    std::vector<std::string> delimited = sutil.delimit(vertex, '/');
+    std::vector<unsigned int> vertexIndices;
+
+    for (std::string indice : delimited) {
+        vertexIndices.push_back(std::stoul(indice) - 1); // -1 to account for obj index start at 1 instead of 0
+    }
+
+    return vertexIndices;
+}
+
+// Given a line containing an ngon, breaks into tris and adds vertices to list
+// Output format is vector of vertices each containing a vector of vertex data
+std::vector<std::vector<unsigned int>> buildFace(std::string line) {
+
+    StringUtil sutil;
+    std::vector<std::vector<unsigned int>> face;
+
+    auto delimited = sutil.delimit(line, ' ');
+
+    if (delimited[0] != "f") return face; // Return nothing if the line is not face data
+
+    // Loop breaks n-gons into tris
+    for (int i = 0; i < delimited.size() - 3; i++) {
+
+        face.push_back(buildVertex(delimited[1]));
+        face.push_back(buildVertex(delimited[i + 2]));
+        face.push_back(buildVertex(delimited[i + 3]));
+
+    }
+
+    return face;
+}
+
+// [vertex][position texture normal] 
+std::vector<std::vector<unsigned int>> MeshImporter::buildMesh(std::string meshFilePath) {
+
+    std::ifstream file(meshFilePath);
+    StringUtil sutil;
+    std::vector<std::vector<unsigned int>> meshData;
+    std::string line;
+
+    while (std::getline(file, line)) {
+
+        if (line.empty()) {
+            continue;
+        }
+
+        auto face = buildFace(line);
+        meshData.insert(meshData.end(), face.begin(), face.end());
+
+    }
+
+    return meshData;
 }
 
 // Gets all normals corresponding to the vertices in the vIndex
@@ -110,62 +165,54 @@ std::vector<float> MeshImporter::readSepTriMesh(std::string meshFilePath)
     StringUtil sutil;
 
     std::vector<float> vIndex;
-    std::vector<unsigned int> fIndex;
     std::vector<float> nIndex;
+    std::vector<std::vector<unsigned int>> mesh;
     std::vector<float> vertices;
 
     std::string line;
 
     vIndex = getVIndex(meshFilePath);
-    fIndex = getFaceIndex(meshFilePath);
     nIndex = getNormalIndex(meshFilePath);
+    mesh = buildMesh(meshFilePath);
     normalizeMesh(vIndex);
 
     // Go through the vIndex and fIndex and build a separate tri structure with color data
-    // Vertex Format: x1,y1,z1,x2,y2,z2,x3,y3,z3,r1,g1,b1,r2,g2,b2,r3,g3,b3
+    // Vertex Format: x,y,z,nx,ny,nz,r,g,b
 
+    // MULTI COLOR TRI
     //auto color1 = { 1.0f,0.0f,0.0f };
     //auto color2 = { 0.0f,1.0f,0.0f };
     //auto color3 = { 0.0f,0.0f,1.0f };
 
+    // WHITE
     //auto color1 = { 1.0f,1.0f,1.0f };
     //auto color2 = { 1.0f,1.0f,1.0f };
     //auto color3 = { 1.0f,1.0f,1.0f };
 
+    // RED
     auto color1 = { 1.0f,0.0f,0.0f };
     auto color2 = { 1.0f,0.0f,0.0f };
     auto color3 = { 1.0f,0.0f,0.0f };
 
-    for (int i = 0; i < fIndex.size() / 3; i++) { // Since each face has 3 positions we div by 3
+    std::vector<std::initializer_list<float>> triColors = { color1, color2, color3 };
 
-        // Each face is built from 3 vertices. First find position of attribute in index
-        // Sub 1 from fIndex to account for obj vIndex starting at 1 instead of 0
-        unsigned int v1IndexPos = fIndex[3 * i + 0] - 1;
-        unsigned int v2IndexPos = fIndex[3 * i + 1] - 1;
-        unsigned int v3IndexPos = fIndex[3 * i + 2] - 1;
+    int vertexNumber = 0;
+    for (std::vector<unsigned int> vertex : mesh) {
 
-        // Get each position (list of 3 coordinates)
-        auto v1 = getIndexedPosition(vIndex, v1IndexPos);
-        auto v2 = getIndexedPosition(vIndex, v2IndexPos);
-        auto v3 = getIndexedPosition(vIndex, v3IndexPos);
+        int normPos = vertex.size() == 3 ? 2 : 1; //  if in pos/tex/norm versus pos//norm format
 
-        // Get each normal (list of x,y,z component)
-        auto n1 = getIndexedPosition(nIndex, v1IndexPos);
-        auto n2 = getIndexedPosition(nIndex, v2IndexPos);
-        auto n3 = getIndexedPosition(nIndex, v3IndexPos);
+        // Get coord data from index
+        auto pos = getIndexedPosition(vIndex, vertex[0]);
+        auto norm = getIndexedPosition(nIndex, vertex[normPos]); // If tex coo
+        auto color = triColors[vertexNumber % 3];
 
         //Insert into vertices, with color data
-        vertices.insert(vertices.end(), v1.begin(), v1.end());
-        vertices.insert(vertices.end(), n1.begin(), n1.end());
-        vertices.insert(vertices.end(), color1);
+        vertices.insert(vertices.end(), pos.begin(), pos.end());
+        vertices.insert(vertices.end(), norm.begin(), norm.end());
+        vertices.insert(vertices.end(), color);
 
-        vertices.insert(vertices.end(), v2.begin(), v2.end());
-        vertices.insert(vertices.end(), n2.begin(), n2.end());
-        vertices.insert(vertices.end(), color2);
+        vertexNumber++;
 
-        vertices.insert(vertices.end(), v3.begin(), v3.end());
-        vertices.insert(vertices.end(), n3.begin(), n3.end());
-        vertices.insert(vertices.end(), color3);
     }
 
     return vertices;

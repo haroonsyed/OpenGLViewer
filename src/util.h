@@ -9,8 +9,10 @@ public:
         std::string curr = "";
         for (char c : str) {
 
-            if (c == delimiter) {
-                delimited.push_back(curr);
+            if (c == delimiter) { 
+                if (curr.size() > 0) {
+                    delimited.push_back(curr); // Don't push back empty strings (double delimiter guard)
+                }
                 curr = "";
             }
             else {
