@@ -8,4 +8,4 @@ static const unsigned int SCR_HEIGHT = 600;
 static bool useSeparateTriangles = true;
 static const std::string meshFilePath = "../data/womanhead.obj";
 static const std::string vertexShaderPath = "../shaders/source.vs";
-static const std::string fragShaderPath = "../shaders/depthShader.fs";
+static const std::string fragShaderPath = "../shaders/source.fs";

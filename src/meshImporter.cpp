@@ -73,7 +73,14 @@ std::vector<type> MeshImporter::getAttributeIndex(std::string meshFilePath, std:
 std::vector<float> MeshImporter::getNormalIndex(std::string meshFilePath) {
     std::vector<float> normalIndex = getAttributeIndex<float>(meshFilePath, "vn");
 
+    // If the normal length is zero then try building normals from other meshData
+
+
     return normalIndex;
+}
+
+std::vector<float> buildNormals(std::string meshFilePath) {
+    return { 0,0,0 };
 }
 
 /*********************/

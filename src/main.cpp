@@ -147,11 +147,16 @@ int main()
         model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glm::mat4 view = inputController.getViewTransform();
 
+        // Light info
+        glm::vec3 light = glm::vec3(-1.0f, 0.0f, -1.0f);
+
         //Pass to gpu
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        unsigned int lightLoc = glGetUniformLocation(shaderProgram, "light");
+        glUniform3fv(lightLoc, 1, glm::value_ptr(light));
 
         // render
         // ------
