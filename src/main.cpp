@@ -148,7 +148,7 @@ int main()
         glm::mat4 view = inputController.getViewTransform();
 
         // Light info
-        glm::vec3 lightPos = glm::vec3(-1.0f, 0.0f, -1.0f);
+        glm::vec3 lightPos = glm::vec3(0.0f, 1.0f, -1.0f);
 
         //Pass to gpu
         unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
