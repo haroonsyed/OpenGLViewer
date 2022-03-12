@@ -11,6 +11,9 @@ class InputController {
 		glm::mat4 viewTransform = glm::mat4(1.0f);
 		double timeAtLastInput = glfwGetTime(); //Used to separate input speed from framerate
 	public:
+		bool mousePressed;
+		double mouseX;
+		double mouseY;
 		InputController(GLFWwindow* window);
 		void processInput();
 		char getPressedKey();

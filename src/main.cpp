@@ -144,7 +144,17 @@ int main()
         // INSPIRED BY TUTORIAL AT https://learnopengl.com/Getting-started/Coordinate-Systems
         //Setup Rotation matrices
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        if (inputController.mousePressed) {
+            int mouseX = inputController.mouseX;
+            int mouseY = inputController.mouseY;
+            // The negative one invert makes moving the model feel more natural in x direction
+            model = glm::rotate(model, (float)(mouseX)*glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, (float)(mouseY) * glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        }
+        else {
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
         glm::mat4 view = inputController.getViewTransform();
 
         // Light info

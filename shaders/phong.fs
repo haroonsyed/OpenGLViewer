@@ -15,11 +15,11 @@ void main()
    vec3 h = normalize((viewDir) + toLight);
 
    float ambient = 0.1;
-   float specularStrength = 0.5;
-   float phongExp = 10000;
+   float specularStrength = 1;
+   float phongExp = 100;
 
    float diffuse = max(dot(transformedNorm,toLight),0);
-   float specular = max(pow(dot(transformedNorm,h), 100),0);
+   float specular = max(pow(dot(transformedNorm,h), phongExp),0);
    
-   FragColor = (ambient + diffuse) * vertexColor + specular * vec4(1.0);
+   FragColor = (ambient + diffuse) * vertexColor + specularStrength * specular * vec4(1.0);
 };

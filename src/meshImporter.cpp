@@ -66,7 +66,7 @@ std::vector<type> MeshImporter::getAttributeIndex(std::string meshFilePath, std:
 }
 
 // Given a string containing data vertex data in format "pos//tex//norm" returns delimited list
-std::vector<unsigned int> buildVertex(std::string vertex) {
+std::vector<unsigned int> MeshImporter::buildVertex(std::string vertex) {
 
     StringUtil sutil;
     std::vector<std::string> delimited = sutil.delimit(vertex, '/');
@@ -81,7 +81,7 @@ std::vector<unsigned int> buildVertex(std::string vertex) {
 
 // Given a line containing an ngon, breaks into tris and adds vertices to list
 // Output format is vector of vertices each containing a vector of vertex data
-std::vector<std::vector<unsigned int>> buildFace(std::string line) {
+std::vector<std::vector<unsigned int>> MeshImporter::buildFace(std::string line) {
 
     StringUtil sutil;
     std::vector<std::vector<unsigned int>> face;
