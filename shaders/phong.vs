@@ -9,12 +9,11 @@ out vec3 transformedNorm;
 
 uniform mat4 model;
 uniform mat4 view;
-uniform vec3 lightPos;
 
 void main()
 {
    transformedPos = vec3(model * vec4(aPos,1));
-   transformedNorm = vec3(model * vec4(normalize(aNorm),0.0));
+   transformedNorm = vec3(model * vec4(aNorm,0.0));
 
    // Calculate Position
    gl_Position = view * vec4(transformedPos,1);
