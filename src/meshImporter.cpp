@@ -4,6 +4,10 @@
 #include <iostream>
 #include "util.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 /*********************/
 // PRIVATE FUNCTIONS
 /*********************/
@@ -65,7 +69,7 @@ std::vector<type> MeshImporter::getAttributeIndex(std::string meshFilePath, std:
     return attributeIndex;
 }
 
-// Given a string containing data vertex data in format "pos//tex//norm" returns delimited list
+// Given a string containing data vertex data in format "pos/tex/norm" or "pos//norm" returns vectorized indices
 std::vector<unsigned int> MeshImporter::buildVertex(std::string vertex) {
 
     StringUtil sutil;
@@ -74,6 +78,11 @@ std::vector<unsigned int> MeshImporter::buildVertex(std::string vertex) {
 
     for (std::string indice : delimited) {
         vertexIndices.push_back(std::stoul(indice) - 1); // -1 to account for obj index start at 1 instead of 0
+    }
+
+    // Just have 1:1 correspondance vIndex with nIndex if no normal data is present, will be computed
+    if (vertexIndices.size() == 1) {
+        vertexIndices.push_back(vertexIndices[0]);
     }
 
     return vertexIndices;
@@ -128,14 +137,50 @@ std::vector<std::vector<unsigned int>> MeshImporter::buildMesh(std::string meshF
 std::vector<float> MeshImporter::getNormalIndex(std::string meshFilePath) {
     std::vector<float> normalIndex = getAttributeIndex<float>(meshFilePath, "vn");
 
-    // If the normal length is zero then try building normals from other meshData
-
-
     return normalIndex;
 }
 
-std::vector<float> buildNormals(std::string meshFilePath) {
-    return { 0,0,0 };
+// Goes through all neighboring faces for each vertex and averages normals
+std::vector<float> MeshImporter::buildNormals(std::vector<float>& vIndex, std::vector<std::vector<unsigned int>>& mesh) {
+
+    std::vector<float> nIndex;
+
+    for (int i = 0; i < vIndex.size()/3; i++) { // Div 3 because x,y,z for each pos
+
+        float xNorm = 0;
+        float yNorm = 0;
+        float zNorm = 0;
+        int faceCount = 0;
+
+        for (int j = 0; j < mesh.size() / 3; j++) { // Go through each face
+            for (int k = 0; k < 3; k++) { // Go through vertices of tri
+                if (mesh[j*3 + k][0] == (unsigned int)i) { // If vertex in question is part of face
+
+                    faceCount++;
+
+                    auto a = getIndexedPosition(vIndex, mesh[j * 3 + 0][0]);
+                    auto b = getIndexedPosition(vIndex, mesh[j * 3 + 1][0]);
+                    auto c = getIndexedPosition(vIndex, mesh[j * 3 + 2][0]);
+
+                    // Compute normal of face (facing outward somehow...)
+                    glm::vec3 ab = glm::vec3(b[0] - a[0], b[1] - a[1], b[2] - a[0]);
+                    glm::vec3 ac = glm::vec3(c[0]-a[0], c[1]-a[1], c[2]-a[0]);
+                    glm::vec3 norm = glm::cross(ab, ac);
+
+                    // Take running average of normal data
+                    xNorm += (norm.x - xNorm) / faceCount;
+                    yNorm += (norm.y - yNorm) / faceCount;
+                    zNorm += (norm.z - zNorm) / faceCount;
+
+                }
+            }
+        }
+
+        // Write normal for this vertex into nIndex
+        nIndex.insert(nIndex.end(), {xNorm, yNorm, zNorm});
+    }
+
+    return nIndex;
 }
 
 /*********************/
@@ -175,6 +220,11 @@ std::vector<float> MeshImporter::readSepTriMesh(std::string meshFilePath)
     nIndex = getNormalIndex(meshFilePath);
     mesh = buildMesh(meshFilePath);
     normalizeMesh(vIndex);
+
+    // Build normals if they don't exist in file
+    if (nIndex.size() == 0) {
+        nIndex = buildNormals(vIndex, mesh);
+    }
 
     // Go through the vIndex and fIndex and build a separate tri structure with color data
     // Vertex Format: x,y,z,nx,ny,nz,r,g,b
