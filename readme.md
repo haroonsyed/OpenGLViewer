@@ -7,11 +7,14 @@
 ![Render Example](./docs/dolphins.png)
 
 ### Features
-- Animated/Rotating View
-- GPU side mesh rendering
+- GPU side rendering
 - Separate Vertex and Fragment Shader files
 - Color interpolation between vertices on face
 - Loading obj files (and breaking n-gon into tris)
+- Animated/Rotating View
+- Scaling with button input
+- Mouse interaction to rotate object in view
+- Phong, Gouraud lighting and Depth shaders
 
 
 ### Technologies Used
@@ -105,7 +108,7 @@ I mainly relied on https://learnopengl.com/ and the class lecture notes to under
 <br>
 I also used https://docs.gl/ to see information regarding the opengl library.
 
-## Assignment Requriements Checklist:
+## Assignment Requriements Checklist (Part 1):
 | Feature | Status | Extra Desc. |
 | ---------------------------------- | --------- | ------------------ |
 | Modify vertex and frag shader to support color data | :white_check_mark: | |
@@ -113,6 +116,16 @@ I also used https://docs.gl/ to see information regarding the opengl library.
 | Load vertex and frag shaders from files (.vs and .fs) | :white_check_mark: | |
 | Make change to vertex/frag shader | :white_check_mark: | Passed model transformation matrix to rotate model as a function of time |
 | Bonus: Implement EBO with indexed triangle structure | :x: | |
+| Documentation | :white_check_mark: | | 
+
+## Assignment Requirements Checklist (Part 2):
+| Feature | Status | Extra Desc. |
+| ---------------------------------- | --------- | ------------------ |
+| Scale up and down object in viewer | :white_check_mark: | Uses 'z' and 'x' buttons |
+| Rotation Functionality | :white_check_mark: | |
+| Z buffer shader | :white_check_mark: | Load "depthShader.fs" and "depthShader.vs" |
+| Add Gouraud and Phong shading to the scene | :white_check_mark: | Generated normals sometimes face the wrong way |
+| Bonus: Implemented mouse input by clicking and rotating with left click | :white_check_mark: | |
 | Documentation | :white_check_mark: | | 
 
 ## DISCLAIMER
