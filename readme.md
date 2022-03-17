@@ -54,7 +54,10 @@ The path between visual studio and using cmake/make directly will differ. Make s
 
 ### Operation Guide
 Change filepath in `config.h` to change obj file loaded in viewer.
-Change bool `useSeparateTriangles` to switch between separate and indexed tri structure.
+Change the shader name for fragment and vertex shader to change shader.
+Change resolution using width and height.
+To zoom in the view, press `z`. To zoom out press `x`.
+Use mouse to rotate object in the viewer, default rotation animation will stop during this time.
 
 ## Functionality
 ### Changing Face and Per-Vertex Color
@@ -79,7 +82,7 @@ for (int i = 0; i < face.size() - 3; i++) {
 ### Normalizing meshes to stay in view
 To keep the mesh within the viewplane I simply had to normalize the vertex list by the maximum coordinate of all vertices.
 
-### Rotating View
+### Rotating Animation in View
 The code for this is based on learnopengl's tutorial at https://learnopengl.com/Getting-started/Coordinate-Systems. Although modified and pretty easy to understand.
 All I had to do was define a glm rotation vector and pass this to my vertex shader, where the model matrix is multiplied by the original mesh's position matrix.
 
@@ -88,19 +91,24 @@ For the rest of the assignment, much of the work was simply reading files and us
 For this I used `fstream` with `getline()`.
 The code for this can be seen in `readMesh()` and `delimit()` of `MeshImporter` class. As well as `readShader` of the shaderImporter class.
 
-## Examples (Separate Tris)
+## Examples with Included Shaders
+### No Lighting
 ![Dolphins Mesh](./docs/dolphins.png)
 ![Teapot Mesh](./docs/teapot.png)
 ![WomanHead Mesh](./docs/womanhead.png)
-![World Mesh](./docs/world_curved.png)
-![Al Character Mesh](./docs/al_character.png)
-![Porsche Mesh](./docs/porsche.png)
+### Depth Shader
+![Al Depth](./docs/al_depth.png)
+### Gouraud Lighting
+### Phong Lighting
 
 <br>
 
-## Animation
+## Videos
 Below is a video of what the viewer looks like when open:<br>
 https://youtu.be/L00kfk67emE
+
+Below is a video of interacting with the viewport (scaling and mouse rotation):<br>
+
 
 
 ## Outside Help
