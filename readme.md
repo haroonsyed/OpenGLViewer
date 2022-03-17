@@ -97,9 +97,19 @@ The code for this can be seen in `readMesh()` and `delimit()` of `MeshImporter` 
 ![Teapot Mesh](./docs/teapot.png)
 ![WomanHead Mesh](./docs/womanhead.png)
 ### Depth Shader
+Note how points further back in the scene appear lighting. 
+I like how the shader gives the objects a transluscent effect as well, maybe useful for water.
+![Dolphins Depth](./docs/dolphins_depth.png)
+![Teapot Depth](./docs/teapot_depth.png)
+![Womanhead Depth](./docs/womanhead_depth.png)
 ![Al Depth](./docs/al_depth.png)
 ### Gouraud Lighting
+Not how the soccerball highlight looks jagged and strange compared to the 
+smoothly interpolated normals of the phong shading.
+![Soccerball Gouraud](./docs/soccerball_gouraud.png)
+
 ### Phong Lighting
+![Soccerball Phong](./docs/soccerball_phong.png)
 
 <br>
 
