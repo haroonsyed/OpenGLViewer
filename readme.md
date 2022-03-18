@@ -104,12 +104,18 @@ I like how the shader gives the objects a transluscent effect as well, maybe use
 ![Womanhead Depth](./docs/womanhead_depth.png)
 ![Al Depth](./docs/al_depth.png)
 ### Gouraud Lighting
-Not how the soccerball highlight looks jagged and strange compared to the 
+Note how the soccerball highlight looks jagged and strange compared to the 
 smoothly interpolated normals of the phong shading.
 ![Soccerball Gouraud](./docs/soccerball_gouraud.png)
+![Womanhead Gouraud](./docs/womanhead_gouraud.png)
+![World_Curved Gouraud](./docs/world_curved_gouraud.png)
+![Galleon Gouraud](./docs/galleon_gouraud.png)
 
 ### Phong Lighting
 ![Soccerball Phong](./docs/soccerball_phong.png)
+![Womanhead Phong](./docs/womanhead_phong.png)
+![World_Curved Phong](./docs/world_curved_phong.png)
+![Galleon Phong](./docs/galleon_phong.png)
 
 <br>
 
@@ -119,6 +125,12 @@ https://youtu.be/L00kfk67emE
 
 Below is a video of interacting with the viewport (scaling and mouse rotation):<br>
 
+
+## Issues
+For .obj files that do not contain normals, the generated normals are sometimes inverted.
+This can cause some faces to be dark, I suspect it is an issue with the order in which I break
+down n-gons. Possible solutions are to re-orient the normal based on dot product with camera, or figure out the correct clockwise/cc orientation to build normals in. Otherwise it looks like this:
+![Normal Issue](./docs/normal_issue.png)
 
 
 ## Outside Help

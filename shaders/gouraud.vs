@@ -19,8 +19,8 @@ void main()
 
    // Calculate vectors needed for lighting
    vec3 normal = normalize(transformedNorm);
-   vec3 toLight = normalize(lightPos-transformedPos);
    vec3 viewDir = normalize(transformedPos);
+   vec3 toLight = normalize(lightPos-transformedPos);
    vec3 h = normalize((viewDir) + toLight);
 
    float ambient = 0.1;
