@@ -124,7 +124,7 @@ Below is a video of what the viewer looks like when open:<br>
 https://youtu.be/L00kfk67emE
 
 Below is a video of interacting with the viewport (scaling and mouse rotation):<br>
-
+https://youtu.be/7Zj660eHgAM
 
 ## Issues
 For .obj files that do not contain normals, the generated normals are sometimes inverted.
